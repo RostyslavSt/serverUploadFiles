@@ -1,6 +1,6 @@
 var express = require('express');
-var multer = require('multer');
-var bodyParser = require('body-parser');
+// var multer = require('multer');
+// var bodyParser = require('body-parser');
 var path = require('path');
 var upload = require('express-fileupload');
 var app = express();
