@@ -1,11 +1,9 @@
-var express = require('express');
-// var multer = require('multer');
-// var bodyParser = require('body-parser');
-var path = require('path');
-var upload = require('express-fileupload');
-var app = express();
 
-app.use(upload()); // configure middleware
+var express = require('express');
+var app = express();
+var path = require('path');
+var formidable = require('formidable');
+var fs = require('fs');
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,29 +20,54 @@ app.get('/test', function (req, res) {
     res.send('hello world');
 });
 
-app.post('/upload', function (req, res) {
-    console.log(req.files);
-    console.log(req.form);
-    if (req.files.upfile) {
-        var file = req.files.upfile,
-            name = file.name,
-            type = file.mimetype;
-        var uploadpath = __dirname + '/uploads/' + name;
-        file.mv(uploadpath, function (err) {
-            if (err) {
-                console.log("File Upload Failed", name, err);
-                res.send("Error Occured!")
-            } else {
-                console.log("File Uploaded", name);
-                res.send('Done! Uploading files')
-            }
-        });
-    } else {
-        res.send("No File selected !");
-        res.end();
-    };
+// app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', function(req, res){
+  res.sendFile(path.join(__dirname, 'views/index.html'));
 });
+
+app.post('/upload', function(req, res){
+
+  // create an incoming form object
+  var form = new formidable.IncomingForm();
+
+  // specify that we want to allow the user to upload multiple files in a single request
+  form.multiples = true;
+
+  // store all uploads in the /uploads directory
+  form.uploadDir = path.join(__dirname, '/uploads');
+
+  // every time a file has been uploaded successfully,
+  // rename it to it's orignal name
+  form.on('file', function(field, file) {
+    fs.rename(file.path, path.join(form.uploadDir, file.name));
+  });
+
+  // log any errors that occur
+  form.on('error', function(err) {
+    console.log('An error has occured: \n' + err);
+  });
+
+  // once all the files have been uploaded, send a response to the client
+  form.on('end', function() {
+    res.end('success');
+  });
+
+  // parse the incoming request containing the form data
+  form.parse(req);
+
+});
+
+
+
+
 
 app.listen(3002, function (a) {
     console.log("Listening to port 3002");
 });
+
+
+
+
+
+
