@@ -24,6 +24,7 @@ app.get('/test', function (req, res) {
 
 app.post('/upload', function (req, res) {
     console.log(req.files);
+    console.log(req.form);
     if (req.files.upfile) {
         var file = req.files.upfile,
             name = file.name,
