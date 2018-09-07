@@ -15,6 +15,11 @@ app.use(function (req, res, next) {
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'views/index.html'));
 });
+
+app.get('/test_post', function (req, res) {
+    res.send('ok');
+});
+
 app.get('/test', function (req, res) {
     res.send('hello world');
 });
@@ -52,7 +57,7 @@ app.post('/upload', function (req, res) {
 
     // once all the files have been uploaded, send a response to the client
     form.on('end', function () {
-        res.end('success');
+        res.end('./uploads/');
     });
 
     
